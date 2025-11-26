@@ -1,49 +1,34 @@
-[build-system]
-requires = ["setuptools>=61.0"]
-build-backend = "setuptools.build_meta"
+name: Manual Publish to PyPI
 
-[project]
-name = "numpyrge256"
-version = "1.0.0"
-description = "NumPy implementation of the RGE-256 ARX-based pseudorandom number generator."
-readme = "README.md"
-requires-python = ">=3.8"
-license = { file = "LICENSE" }
+# Run ONLY when you manually click "Run workflow"
+on:
+  workflow_dispatch:
 
-authors = [
-    { name = "Steven Reid" }
-]
+jobs:
+  publish:
+    runs-on: ubuntu-latest
 
-keywords = [
-    "rng",
-    "prng",
-    "random",
-    "entropy",
-    "arx",
-    "numpy",
-    "pseudorandom"
-]
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-classifiers = [
-    "Programming Language :: Python",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: Implementation :: CPython",
-    "License :: OSI Approved :: MIT License",
-    "Operating System :: OS Independent",
-    "Topic :: Scientific/Engineering",
-    "Topic :: Scientific/Engineering :: Mathematics",
-    "Topic :: Scientific/Engineering :: Information Analysis"
-]
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.10"
 
-dependencies = [
-    "numpy>=1.20"
-]
+    - name: Install build tools
+      run: |
+        python -m pip install --upgrade pip
+        pip install build twine
 
-[project.urls]
-Homepage = "https://github.com/RRG314/numpyrge256"
-Source = "https://github.com/RRG314/numpyrge256"
-Issues = "https://github.com/RRG314/numpyrge256/issues"
-Paper = "https://zenodo.org/records/17713219"
-Torch-Version = "https://github.com/RRG314/torchrge256"
-Demo = "https://github.com/RRG314/RGE-256-app"
+    - name: Build package
+      run: |
+        python -m build
+
+    - name: Upload to PyPI
+      env:
+        TWINE_USERNAME: __token__
+        TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+      run: |
+        twine upload dist/*
