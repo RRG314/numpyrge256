@@ -1,198 +1,140 @@
 
-# **RGE-256 NumPy Backend**
 
-A pure NumPy implementation of the RGE-256 pseudorandom number generator, designed for deterministic research workflows, numerical simulation, and integration into Python-based scientific libraries. This backend reproduces the full 256-bit ARX mixing structure of the RGE-256 design using only NumPy operations, enabling full reproducibility and platform-independent behavior without relying on CUDA, PyTorch, or external dependencies.
+**Numpyrge256**
 
-RGE-256 NumPy provides reproducible 32-bit output, domain-separated substreams, batch generation, and uniform statistical behavior consistent with the RGE-256 specification.
+A pure NumPy implementation of **RGE-256**, a 256-bit ARX-based pseudorandom number generator featuring geometric rotation scheduling and structured entropy from Recursive Division Tree (RDT) analysis.
 
----
+This package provides a lightweight, dependency-free core suitable for research, simulations, Monte Carlo methods, and general-purpose randomness in scientific computing.
 
-## **Features**
-
-* Pure NumPy implementation (no GPU or external dependencies)
-* 256-bit internal state (eight 32-bit lanes)
-* ARX-based mixing (add–rotate–xor) identical to the reference RGE-256 design
-* Geometric rotation scheduling based on RGE entropy constants
-* Deterministic sequence generation for reproducible research
-* Domain-separated streams for parallel or independent workflows
-* Integer, float, ranged, and batch generation functions
-* Comprehensive test suite for correctness and statistical sanity
+**Author:** Steven Reid
+**ORCID:** 0009-0003-9132-3410
+**Paper:** *RGE-256: A New ARX-Based Pseudorandom Number Generator With Structured Entropy and Empirical Validation* (Nov 2025)
+**Zenodo:** [https://zenodo.org/records/17713219](https://zenodo.org/records/17713219)
+**PyTorch version:** [https://github.com/RRG314/torchrge256](https://github.com/RRG314/torchrge256)
+**Demo:** [https://github.com/RRG314/RGE-256-app](https://github.com/RRG314/RGE-256-app)
 
 ---
 
-## **Installation**
+## Key Features
 
-Clone the repository:
+* Pure NumPy implementation (no external dependencies)
+* 256-bit internal state (8 × 32-bit words)
+* Deterministic ARX update structure
+* Rotation constants derived from structured geometric entropy
+* Domain separation for independent streams
+* Reproducible sequences for research and simulation
+* Batch generation for large datasets
 
-```bash
-git clone https://github.com/yourname/numpy-rge256.git
-cd numpy-rge256
+This implementation is focused on simplicity, portability, and reliability for scientific use cases.
 
+---
 
-## **Usage**
+## Installation
 
-### Basic Example
+PyPI:
+
+```
+pip install rge256
+```
+
+Or install directly from GitHub:
+
+```
+pip install git+https://github.com/RRG314/numpyrge256
+```
+
+---
+
+## Quick Start
 
 ```python
-from rge256_numpy import RGE256
+from rge256 import RGE256
 
 rng = RGE256(seed=12345)
 
-print(rng.next32())       # 32-bit unsigned integer
-print(rng.nextFloat())    # float in [0, 1)
-print(rng.nextRange(1,6)) # bounded integer
-```
+# Single 32-bit integer
+x = rng.next32()
 
-### Batch Generation
+# Float in [0, 1)
+f = rng.nextFloat()
 
-```python
-values = rng.next32_batch(100000)  # NumPy array of 100k uint32 numbers
-```
+# Integer in range [lo, hi]
+v = rng.nextRange(1, 100)
 
-### Domain Separation
-
-```python
-rng_A = RGE256(seed=1000, domain="A")
-rng_B = RGE256(seed=1000, domain="B")
-
-assert rng_A.next32() != rng_B.next32()
+# Batch of numbers
+batch = rng.next32_batch(1000)
 ```
 
 ---
 
-## **API Overview**
+## API Summary
 
-### `class RGE256(seed: int, rounds: int = 3, zetas=(1.585, 1.926, 1.262), domain="numpy")`
+### `RGE256(seed, rounds=3, zetas=(1.585, 1.926, 1.262), domain="numpy")`
 
 Creates a new RGE-256 generator.
 
-#### Methods
+Core methods:
 
-| Method              | Description                                                   |
-| ------------------- | ------------------------------------------------------------- |
-| `next32()`          | Returns a 32-bit unsigned integer.                            |
-| `nextFloat()`       | Returns a float in [0, 1).                                    |
-| `nextRange(lo, hi)` | Returns an integer in the inclusive range.                    |
-| `next32_batch(n)`   | Returns a NumPy array of length `n` containing uint32 values. |
+* `next32()` – returns a 32-bit unsigned integer
+* `nextFloat()` – returns a float in [0, 1)
+* `nextRange(lo, hi)` – returns an integer in [lo, hi]
+* `next32_batch(n)` – generates an array of n random uint32 values
 
----
-
-## **Statistical Properties**
-
-The NumPy backend matches the reference RGE-256 behavior:
-
-* Bit frequency is balanced within ±0.5% of ideal across all 32 positions.
-* Chi-square uniformity (mod 256) is close to the theoretical value (≈ 255 for df=255).
-* Output passes standard PRNG sanity tests:
-
-  * Bit bias
-  * Domain independence
-  * Repeatability
-  * Distribution uniformity
-  * Batch consistency
-
-Example bit-balance result for 50,000 samples:
-
-```
-0.497–0.505 across all 32 bits
-```
-
-Chi-square (mod 256) example:
-
-```
-246.58 (df=255)
-```
-
-These values indicate statistically uniform output consistent with expectations for a high-quality ARX mixing function.
+All outputs are deterministic given `(seed, domain, rounds, zetas)`.
 
 ---
 
-## **Running the Test Suite**
+## Notes on Statistical Behavior
 
-The test suite validates:
+Empirical testing (Dieharder, bit balance analysis, chi-square evaluation) shows:
 
-* Determinism
-* Domain separation
-* Batch consistency
-* Bit-balance
-* Chi-square uniformity
-* Basic performance targets
+* Entropy ≈ 7.999–8.000 bits/byte
+* Uniform bit distribution (~50% ones per bit position)
+* Low serial and lag-1 correlation
+* Stable behavior across NumPy and PyTorch implementations
 
-Run tests with:
-
-```bash
-pytest -q
-```
-
-Or run the included all-in-one notebook tests.
+The design inherits rotation structure from geometric entropy constants used in the corresponding RDT entropy framework.
 
 ---
 
-## **Performance Notes**
+## Disclaimer
 
-This NumPy backend is designed for correctness and reproducibility, not raw throughput.
+RGE-256 is **not** designed as or intended to serve as a cryptographic random number generator.
+It has not been formally analyzed for cryptographic security.
 
-Typical performance (single-thread CPU):
-
-```
-≈ 5,000–7,000 outputs/sec
-```
-
-For high-throughput applications (millions of samples per second), use the RGE-256 PyTorch backend or a compiled version.
-
-The NumPy backend is ideal for:
-
-* CPU-limited environments
-* Portable reproducible simulations
-* Scientific analysis
-* Unit testing and verification
-* Library integration
+Use only for research, simulation, and non-security-critical applications.
 
 ---
 
-## **Versioning**
+## Citation
 
-This project uses semantic versioning:
+Please cite the corresponding preprint:
 
-* **MAJOR** – structural changes or state format changes
-* **MINOR** – new features, batch functions, enhancements
-* **PATCH** – bug fixes, documentation improvements
-
----
-
-## **Citation**
-
-If you reference this implementation in research, cite:
-
-```
-Reid, Steven. "RGE-256: A 256-bit ARX Pseudorandom Number Generator with
-Geometric Entropy Scheduling." Zenodo DOI 10.5281/zenodo.17690619. , 2025.
-```
-
-ORCID: **0009-0003-9132-3410**
-
----
-
-## **License**
-
-Choose your preferred license (MIT is recommended for libraries):
-
-Example MIT license header:
-
-```
-MIT License  
-Copyright (c) 2025 Steven Reid
+```bibtex
+@misc{reid2025rge256,
+  author       = {Reid, Steven},
+  title        = {RGE-256: A New ARX-Based Pseudorandom Number Generator
+                  With Structured Entropy and Empirical Validation},
+  year         = {2025},
+  howpublished = {\url{https://zenodo.org/records/17713219}},
+  note         = {ORCID: 0009-0003-9132-3410}
+}
 ```
 
 ---
 
-## **Contact**
+## Related Repositories
 
-For questions, contributions, or discussions:
+* **PyTorch implementation:**
+  [https://github.com/RRG314/torchrge256](https://github.com/RRG314/torchrge256)
 
-* Author: **Steven Reid**
-* ORCID: **0009-0003-9132-3410**
-* Email: **Sreid1118@gmail.com**
+* **Web-based demonstration:**
+  [https://github.com/RRG314/RGE-256-app](https://github.com/RRG314/RGE-256-app)
 
 ---
- structure.”**
+
+## License
+
+MIT license.
+
+
