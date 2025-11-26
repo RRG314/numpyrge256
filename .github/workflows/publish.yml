@@ -1,17 +1,15 @@
-name: Publish to PyPI
+name: Manual Publish to PyPI
 
+# Run ONLY when you manually click "Run workflow"
 on:
-  push:
-    tags:
-      - "v*"      # Example: v1.0.2
-  workflow_dispatch:   # Allows manual run
+  workflow_dispatch:
 
 jobs:
-  build-and-publish:
+  publish:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
+    - name: Checkout code
       uses: actions/checkout@v4
 
     - name: Set up Python
@@ -25,10 +23,12 @@ jobs:
         pip install build twine
 
     - name: Build package
-      run: python -m build
+      run: |
+        python -m build
 
-    - name: Publish to PyPI
+    - name: Upload to PyPI
       env:
         TWINE_USERNAME: __token__
         TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
-      run: twine upload dist/*
+      run: |
+        twine upload dist/*
