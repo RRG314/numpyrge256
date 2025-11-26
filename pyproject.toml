@@ -3,9 +3,9 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "rge256"
+name = "numpyrge256"
 version = "1.0.0"
-description = "Pure NumPy implementation of the RGE-256 ARX-based pseudorandom number generator."
+description = "NumPy implementation of the RGE-256 ARX-based pseudorandom number generator."
 readme = "README.md"
 requires-python = ">=3.8"
 license = { file = "LICENSE" }
