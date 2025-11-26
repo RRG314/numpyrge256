@@ -25,8 +25,9 @@ keywords = [
 ]
 
 classifiers = [
+    "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: Implementation :: CPython",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
@@ -46,4 +47,3 @@ Issues = "https://github.com/RRG314/numpyrge256/issues"
 Paper = "https://zenodo.org/records/17713219"
 Torch-Version = "https://github.com/RRG314/torchrge256"
 Demo = "https://github.com/RRG314/RGE-256-app"
-
