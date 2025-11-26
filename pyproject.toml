@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rge256"
+version = "1.0.0"
+description = "Pure NumPy implementation of the RGE-256 ARX-based pseudorandom number generator."
+readme = "README.md"
+requires-python = ">=3.8"
+license = { file = "LICENSE" }
+
+authors = [
+    { name = "Steven Reid" }
+]
+
+keywords = [
+    "rng",
+    "prng",
+    "random",
+    "entropy",
+    "arx",
+    "numpy",
+    "pseudorandom"
+]
+
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: Python :: 3 :: Only",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Topic :: Scientific/Engineering :: Information Analysis"
+]
+
+dependencies = [
+    "numpy>=1.20"
+]
+
+[project.urls]
+Homepage = "https://github.com/RRG314/numpyrge256"
+Source = "https://github.com/RRG314/numpyrge256"
+Issues = "https://github.com/RRG314/numpyrge256/issues"
+Paper = "https://zenodo.org/records/17713219"
+Torch-Version = "https://github.com/RRG314/torchrge256"
+Demo = "https://github.com/RRG314/RGE-256-app"
+
