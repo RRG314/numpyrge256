@@ -1,3 +1,3 @@
-from .rge256 import RGE256
+from .rge256 import RGE256ctr_NumPy
 
-__all__ = ["RGE256"]
+__all__ = ["RGE256ctr_NumPy"]
